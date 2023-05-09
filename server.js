@@ -20,8 +20,8 @@ app.get('/', (req, res) => {
   res.send('Hello, world!');
 });
 
-app.get('/signup.html', (req, res) => {
-  res.sendFile(__dirname + '/public/signup.html');
+app.get('/index.html', (req, res) => {
+  res.sendFile(__dirname + 'https://pastryhamisrvcs.netlify.app/index.html');
 });
 
 app.post('/signup', (req, res) => {
@@ -48,12 +48,12 @@ app.post('/signup', (req, res) => {
     fs.writeFileSync('users.json', JSON.stringify(users));
 
     // Redirect the user to the login page
-    res.redirect('/login.html');
+    res.redirect('https://pastryhamisrvcs.netlify.app/login.html');
   });
 });
 
 app.get('/login.html', (req, res) => {
-  res.sendFile(__dirname + '/public/login.html');
+  res.sendFile(__dirname + 'https://pastryhamisrvcs.netlify.app/login.html');
 });
 
 app.post('/login', (req, res) => {
@@ -84,7 +84,7 @@ app.get('/dashboard.html', (req, res) => {
 
   // Redirect to login page if email is not found in the cookie
   if (!email) {
-    return res.redirect('/login.html');
+    return res.redirect('https://pastryhamisrvcs.netlify.app/login.html');
   }
   
 
@@ -103,7 +103,7 @@ app.get('/dashboard.html', (req, res) => {
 
 app.post('/logout', (req, res) => {
   res.clearCookie('email');
-  res.redirect('/login.html');
+  res.redirect('https://pastryhamisrvcs.netlify.app/login.html');
 });
 
 app.listen(port, () => {
