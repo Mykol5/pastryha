@@ -4,24 +4,37 @@ const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const fs = require('fs');
 const cors = require('cors');
+const path = require('path');
 const ejs = require('ejs');
+const session = require('express-session');
 
 const app = express();
-const port = 3000;
+const port = 5501;
 
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'client'), {
+  etag: false,
+  maxAge: 0,
+  lastModified: false,
+  cacheControl: false,
+  extensions: ['html', 'css', 'js']
+}));
+app.set('views', path.join(__dirname, '..', 'client', 'views'));
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors()); // Allow cross-origin requests
 
-app.get('/', (req, res) => {
-  res.send('Hello, world!');
-});
+app.use(session({
+  secret: 'mysecretkey',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}));
 
 app.get('/signup.html', (req, res) => {
-  res.sendFile(__dirname + '/public/signup.html');
+  res.setHeader('Content-Type', 'text/html');
+  res.sendFile(path.join(__dirname + '/../client/signup.html'));
 });
 
 app.post('/signup', (req, res) => {
@@ -53,7 +66,8 @@ app.post('/signup', (req, res) => {
 });
 
 app.get('/login.html', (req, res) => {
-  res.sendFile(__dirname + '/public/login.html');
+  res.setHeader('Content-Type', 'text/html');
+  res.sendFile(path.join(__dirname + '/../client/login.html'));
 });
 
 app.post('/login', (req, res) => {
@@ -101,9 +115,21 @@ app.get('/dashboard.html', (req, res) => {
   res.render('dashboard', { user: user });
 });
 
+// 
 app.post('/logout', (req, res) => {
-  res.clearCookie('email');
-  res.redirect('/login.html');
+  req.session.destroy(err => {
+      if (err) {
+          console.log(err);
+          res.send('Error logging out');
+      } else {
+          res.clearCookie('email');
+          res.redirect('/login.html');
+      }
+  });
+});
+
+app.get('/', (req, res) => {
+  res.send('Hello, world!');
 });
 
 app.listen(port, () => {
