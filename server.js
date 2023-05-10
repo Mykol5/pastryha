@@ -77,14 +77,19 @@ app.post('/login', (req, res) => {
   const users = JSON.parse(fs.readFileSync('users.json', 'utf8'));
   const user = users.find(user => user.email === email);
 
-  // Check if the user's credentials are correct
+  // Check if the user exists and their credentials are correct
+  if (!user) {
+    // If the user does not exist, show an error message
+    return res.send('Invalid email or password');
+  }
+  
   bcrypt.compare(password, user.password, (err, result) => {
     if (result) {
       // Set a cookie to remember the user's email
       res.cookie('email', email);
 
-      // Redirect the user to the dashboard page
-      res.redirect('/dashboard.html');
+      // Redirect the user to the frontend link
+      res.redirect('https://pastryhamisrvcs.netlify.app/dashboard.html');
     } else {
       // If the credentials are incorrect, show an error message
       res.send('Invalid email or password');
@@ -98,7 +103,7 @@ app.get('/dashboard.html', (req, res) => {
 
   // Redirect to login page if email is not found in the cookie
   if (!email) {
-    return res.redirect('/login.html');
+    return res.redirect('https://pastryhamisrvcs.netlify.app/login.html');
   }
   
 
