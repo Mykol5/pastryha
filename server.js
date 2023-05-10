@@ -33,8 +33,7 @@ app.use(session({
 }));
 
 app.get('/signup.html', (req, res) => {
-  res.setHeader('Content-Type', 'text/html');
-  res.sendFile(path.join(__dirname + '/../client/signup.html'));
+  res.sendFile(__dirname + '/public/signup.html');
 });
 
 app.post('/signup', (req, res) => {
@@ -61,7 +60,7 @@ app.post('/signup', (req, res) => {
     fs.writeFileSync('users.json', JSON.stringify(users));
 
     // Redirect the user to the login page
-    res.redirect('/login.html');
+    res.redirect('https://pastryhamisrvcs.netlify.app/login.html');
   });
 });
 
@@ -77,14 +76,19 @@ app.post('/login', (req, res) => {
   const users = JSON.parse(fs.readFileSync('users.json', 'utf8'));
   const user = users.find(user => user.email === email);
 
-  // Check if the user's credentials are correct
+  // Check if the user exists and their credentials are correct
+  if (!user) {
+    // If the user does not exist, show an error message
+    return res.send('Invalid email or password');
+  }
+  
   bcrypt.compare(password, user.password, (err, result) => {
     if (result) {
       // Set a cookie to remember the user's email
       res.cookie('email', email);
 
-      // Redirect the user to the dashboard page
-      res.redirect('/dashboard.html');
+      // Redirect the user to the frontend link
+      res.redirect('https://pastryhamisrvcs.netlify.app/dashboard.html');
     } else {
       // If the credentials are incorrect, show an error message
       res.send('Invalid email or password');
@@ -98,7 +102,7 @@ app.get('/dashboard.html', (req, res) => {
 
   // Redirect to login page if email is not found in the cookie
   if (!email) {
-    return res.redirect('/login.html');
+    return res.redirect('https://pastryhamisrvcs.netlify.app/login.html');
   }
   
 
@@ -117,24 +121,64 @@ app.get('/dashboard.html', (req, res) => {
 
 // 
 app.post('/logout', (req, res) => {
-  req.session.destroy(err => {
-      if (err) {
-          console.log(err);
-          res.send('Error logging out');
-      } else {
-          res.clearCookie('email');
-          res.redirect('/login.html');
-      }
-  });
-});
-
-app.get('/', (req, res) => {
-  res.send('Hello, world!');
+  res.clearCookie('email');
+  res.redirect('/login.html');
 });
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+
+
+
+
+
+
+
+
+
+
+// const express = require('express');
+// const bodyParser = require('body-parser');
+// const bcrypt = require('bcrypt');
+// const cookieParser = require('cookie-parser');
+// const fs = require('fs');
+// const cors = require('cors');
+// const ejs = require('ejs');
+
+// const app = express();
+// const port = 3000;
+
+// app.use(express.static('public'));
+// app.set('view engine', 'ejs');
+
+// app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(cookieParser());
+// app.use(cors()); // Allow cross-origin requests
+
+// app.get('/', (req, res) => {
+//   res.send('Hello, world!');
+// });
+
+// app.get('/index.html', (req, res) => {
+//   res.sendFile(__dirname + 'https://pastryhamisrvcs.netlify.app/index.html');
+// });
+
+// app.post('/signup', (req, res) => {
+//   console.log('POST request received');
+//   const { name, email, password } = req.body;
+
+  // Validate the input (e.g., check if email is valid and password is strong enough)
+
+  // Hash the password for security
+  
+     
+
+  // res.send(`Welcome to the dashboard, ${user.name}!`);
+  // Send the dashboard HTML file with the user's name
+  // res.sendFile(__dirname + '/public/dashboard.html');
+
 
 
 
