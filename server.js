@@ -184,84 +184,13 @@ app.listen(port, () => {
   // Validate the input (e.g., check if email is valid and password is strong enough)
 
   // Hash the password for security
-  bcrypt.hash(password, 10, (err, hash) => {
-    // Check if the users.json file exists, and create it if it doesn't
-    if (!fs.existsSync('users.json')) {
-      fs.writeFileSync('users.json', '[]');
-    }
-
-    // Append the user's information to the JSON file
-    const user = {
-      name: name,
-      email: email,
-      password: hash
-    };
-    const users = JSON.parse(fs.readFileSync('users.json', 'utf8'));
-    users.push(user);
-    fs.writeFileSync('users.json', JSON.stringify(users));
-
-    // Redirect the user to the login page
-    res.redirect('https://pastryhamisrvcs.netlify.app/login.html');
-  });
-});
-
-app.get('/login.html', (req, res) => {
-  res.sendFile(__dirname + 'https://pastryhamisrvcs.netlify.app/login.html');
-});
-
-app.post('/login', (req, res) => {
-  const { email, password } = req.body;
-
-  // Find the user with the matching email in the JSON file
-  const users = JSON.parse(fs.readFileSync('users.json', 'utf8'));
-  const user = users.find(user => user.email === email);
-
-  // Check if the user's credentials are correct
-  bcrypt.compare(password, user.password, (err, result) => {
-    if (result) {
-      // Set a cookie to remember the user's email
-      res.cookie('email', email);
-
-      // Redirect the user to the dashboard page
-      res.redirect('/dashboard.html');
-    } else {
-      // If the credentials are incorrect, show an error message
-      res.send('Invalid email or password');
-    }
-  });
-});
-
-app.get('/dashboard.html', (req, res) => {
-  // Get the email from the cookie
-  const email = req.cookies.email;
-
-  // Redirect to login page if email is not found in the cookie
-  if (!email) {
-    return res.redirect('https://pastryhamisrvcs.netlify.app/login.html');
-  }
   
+     
 
-  // Find the user with the matching email in the JSON file
-  const users = JSON.parse(fs.readFileSync('users.json', 'utf8'));
-  const user = users.find(user => user.email === email);
-
-  // Display the dashboard page with the user's name
   // res.send(`Welcome to the dashboard, ${user.name}!`);
   // Send the dashboard HTML file with the user's name
   // res.sendFile(__dirname + '/public/dashboard.html');
 
-  // Render the dashboard EJS template with the user's name
-  res.render('dashboard', { user: user });
-});
-
-app.post('/logout', (req, res) => {
-  res.clearCookie('email');
-  res.redirect('https://pastryhamisrvcs.netlify.app/login.html');
-});
-
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
 
 
 
