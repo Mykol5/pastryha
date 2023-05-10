@@ -32,9 +32,9 @@ app.use(session({
   cookie: { secure: false }
 }));
 
-app.get('/signup.html', (req, res) => {
+app.get('/index.html', (req, res) => {
   res.setHeader('Content-Type', 'text/html');
-  res.sendFile(path.join(__dirname + '/../client/signup.html'));
+  res.sendFile(path.join(__dirname + '/../client/index.html'));
 });
 
 app.post('/signup', (req, res) => {
