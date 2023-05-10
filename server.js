@@ -61,7 +61,7 @@ app.post('/signup', (req, res) => {
     fs.writeFileSync('users.json', JSON.stringify(users));
 
     // Redirect the user to the login page
-    res.redirect('/login.html');
+    res.redirect('https://pastryhamisrvcs.netlify.app/login.html');
   });
 });
 
@@ -123,7 +123,7 @@ app.post('/logout', (req, res) => {
           res.send('Error logging out');
       } else {
           res.clearCookie('email');
-          res.redirect('/login.html');
+          res.redirect('https://pastryhamisrvcs.netlify.app/login.html');
       }
   });
 });
